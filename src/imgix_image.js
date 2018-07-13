@@ -2,140 +2,142 @@ export default class ImgixImage {
 
   constructor(img) {
     // Length of crossfade transition.
-    this.timeToFade = 250;
+    this.timeToFade = 1000;
     // Main (pixellated placeholder) image.
-    this.img = $(img);
+    this.placeholderImg = $(img);
     // Kick off the optimization process.
     this.initOptimization();
   }
 
   /**
-   * Load an image in memory with the same source as the main image. Once that has
-   * completed, we know we're safe to kick off the processing.
+   * Load an image in memory (not within the DOM) with the same source as the
+   * placeholder image. Once that has completed, we know we're safe to begin
+   * processing.
    */
   initOptimization() {
     $('<img>')
-      .on('load', $.proxy(this.renderTmpImg, this))
-      .attr('src', this.img.attr('src'));
+      .on('load', $.proxy(this.renderFullSizeImg, this))
+      .attr('src', this.placeholderImg.attr('src'));
   }
 
-  // ---------------------------------------- | Temp Image
+  // ---------------------------------------- | Full-Size Image
 
   /**
-   * Render the temp image behind the main image.
+   * Render the full-size image behind the placeholder image.
    */
-  renderTmpImg() {
-    this.initTmpImg();
-    this.setTmpImgCss();
-    this.setTmpImgSrc();
-    this.addTmpImgToDom();
+  renderFullSizeImg() {
+    this.initFullSizeImg();
+    this.setFullSizeImgTempCss();
+    this.setFullSizeImgSrc();
+    this.addFullSizeImgToDom();
     this.initTransition();
   }
 
   /**
-   * Temp image is a duplicate of the main image used to achieve the fading
-   * effect.
+   * The full-size image is a clone of the placeholder image. This enables us to
+   * easily replace it without losing any necessary styles or attributes.
    */
-  initTmpImg() {
-    this.tmpImg = this.img.clone();
+  initFullSizeImg() {
+    this.fullSizeImg = this.placeholderImg.clone();
   }
 
   /**
-   * Set the CSS of the temp element to sit directly behind the pixelated image.
+   * Give the full-size image a temporary set of CSS rules so that it can sit
+   * directly behind the placeholder image while loading.
    */
-  setTmpImgCss() {
-    this.tmpImg.css({
+  setFullSizeImgTempCss() {
+    this.fullSizeImg.css({
       position: 'absolute',
-      top: this.img.position().top,
-      left: this.img.position().left,
-      width: this.img.width(),
-      height: this.img.height(),
-      // zIndex: this.getTmpImgZ()
+      top: this.placeholderImg.position().top,
+      left: this.placeholderImg.position().left,
+      width: this.placeholderImg.width(),
+      height: this.placeholderImg.height()
     });
   }
 
   /**
-   * Temp image sits directly behind the main image, so it should have a z of 1
-   * less than the main image.
+   * Prep the full-size image with the attributes necessary to become its full
+   * size. Right now it is still just a replica of the placeholder, sitting
+   * right behind the placeholder.
+   *
+   * We set the src directly even though we're using imgix.js because older
+   * browsers don't support the srcset attribute which is what imgix.js relies
+   * upon.
    */
-  getTmpImgZ() {
-    let z = parseInt(this.img.css('z-index'));
-    if (isNaN(z)) { z = 0; }
-    return z - 1;
+  setFullSizeImgSrc() {
+    var newSrc = this.placeholderImg.attr('src')
+      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width())
+      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
+    this.fullSizeImg.attr('ix-src', newSrc);
+    // TODO: Make this a configurable option or document it as a more semantic temporary class
+    this.fullSizeImg.addClass('img-responsive tmp-img-placeholder');
+    // TODO: This should respect the option from the Optimizer class for the select
+    this.fullSizeImg.removeAttr('data-optimize-img');
   }
 
   /**
-   * Prep temp image for imgix. We replace the placeholder URL with the proper
-   * dimensions for the space for browsers that don't support srcset/sizes. We
-   * are not currently listening for changes in this regard, so older browsers
-   * will not see this image change size if the window is resized.
+   * Render the full-size image in the DOM.
    */
-  setTmpImgSrc() {
-    var newSrc = this.img.attr('src')
-      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.img.width())
-      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.img.height());
-    this.tmpImg.attr('ix-src', newSrc);
-    this.tmpImg.addClass('img-responsive tmp-img-placeholder');
-    this.tmpImg.removeAttr('data-optimize-img');
-  }
-
-  /**
-   * Add temp image to the DOM.
-   */
-  addTmpImgToDom() {
-    this.tmpImg.insertBefore(this.img);
+  addFullSizeImgToDom() {
+    this.fullSizeImg.insertBefore(this.placeholderImg);
   }
 
   // ---------------------------------------- | Image Transition
 
   /**
-   * Once the image is loaded, start the transition. This is the critical piece.
-   * imgix.js uses the ix-src attribute to build out the srcset attribute. Then,
-   * based on the sizes attribute, the browser determines which source to
-   * render. Therefore we can't preload in memory because we need imgix to do
-   * its thing directly in the DOM.
+   * Once the full-size image is loaded, begin the transition. This is the
+   * critical piece of this process. Imgix.js uses the ix-src attribute to build
+   * out the srcset attribute. Then, based on the sizes attribute, the browser
+   * determines which source to render. Therefore we can't preload in memory
+   * because we need imgix to do its thing directly in the DOM.
    */
   initTransition() {
-    // this.tmpImg.on('load', $.proxy(this.transitionImg, this));
+    this.fullSizeImg.on('load', $.proxy(this.transitionImg, this));
     imgix.init();
   }
 
   /**
-   * Remove the something ...
+   * Fade out the placeholder image, effectively showing the image behind it.
+   *
+   * Once the fade out transition has completed, remove any temporary properties
+   * from the full-size image (so it gets back to being a clone of the
+   * placeholder, with the full-size src).
+   *
+   * Finally, remove the placeholder image from the DOM since we don't need it
+   * any more.
    */
   transitionImg() {
     this.fadeOutPlaceholder();
     setTimeout($.proxy(function() {
-      this.removeTmpImgProperties();
+      this.removeFullSizeImgProperties();
       this.removeImg();
     }, this), this.timeToFade);
   }
 
   /**
-   * Temporarily fade out placeholder image. We will fade it back in after
-   * replacing its source with the appropriate value.
+   * Fade out the placeholder image.
    */
   fadeOutPlaceholder() {
-    this.img.fadeTo(this.timeToFade, 0);
+    this.placeholderImg.fadeTo(this.timeToFade, 0);
   }
 
   /**
-   * Remove temporary styles and class from the temp image, which effectively
-   * replaces the main image.
+   * Remove temporary styles and class from the full-size image, which
+   * effectively means it has replaced the placeholder image.
    */
-  removeTmpImgProperties() {
-    this.tmpImg.removeAttr('style');
-    this.tmpImg.removeClass('tmp-img-placeholder');
-    // this.tmpImg.attr('data-img-processed', true);
+  removeFullSizeImgProperties() {
+    this.fullSizeImg.removeAttr('style');
+    // TODO: Update this with how the class is handled above.
+    this.fullSizeImg.removeClass('tmp-img-placeholder');
   }
 
   /**
-   * Remove main image from the DOM.
+   * Remove the placeholder image from the DOM since we no longer need it.
    */
   removeImg() {
-    if(!this.img) { return }
-    this.img.remove();
-    this.img = undefined;
+    if(!this.placeholderImg) { return }
+    this.placeholderImg.remove();
+    this.placeholderImg = undefined;
   }
 
 }
