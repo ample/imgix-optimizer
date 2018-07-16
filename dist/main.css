@@ -1,0 +1,10 @@
+img {
+  position: relative;
+  width: 100%;
+}
+
+.jumbotron {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
