@@ -153,11 +153,17 @@ export default class ImgixBgImage {
    * of the main element.
    */
   setFullSizeImgUrl() {
+    // Work with the placeholdler image URL, which has been pulled from the
+    // background-image css property of the main elements.
     let url = this.placeholderImgUrl.split('?');
+    // q is an array of querystring parameters as ["k=v", "k=v", ...].
     let q = url[url.length - 1].split('&');
+    // Mapping q converts the array to an object of querystring parameters as
+    // { k: v, k: v, ... }.
     let args = {};
     q.map((x) => args[x.split('=')[0]] = x.split('=')[1]);
-
+    // If the image's container is wider than it is tall, we only set width and
+    // unset height, and vice versa.
     if (this.el.width() >= this.el.height()) {
       args['w'] = this.el.width();
       delete args['h'];
@@ -165,13 +171,12 @@ export default class ImgixBgImage {
       args['h'] = this.el.height();
       delete args['w'];
     }
-
+    // Redefine q and go the other direction -- take the args object and convert
+    // it back to an array of querystring parameters, as ["k=v", "k=v", ...].
     q = [];
-    for (let k in args) {
-      q.push(`${k}=${args[k]}`);
-    }
-
-    this.fullSizeImgUrl = `${url[0]}?${q.join('&')}`;
+    for (let k in args) { q.push(`${k}=${args[k]}`) }
+    // Store the result and return.
+    return this.fullSizeImgUrl = `${url[0]}?${q.join('&')}`;
   }
 
   /**
