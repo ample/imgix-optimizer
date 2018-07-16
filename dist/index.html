@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>IMGIX Optimizer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+
+  <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+  <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
+  <script src="imgix-optimizer.js"></script>
+</head>
+
+<body>
+
+  <div class="container my-5">
+    <div class="card-columns">
+      <div class="card">
+        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=16&h=9&fit=crop" data-optimize-img>
+      </div>
+      <div class="card">
+        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=12&h=9&fit=crop" data-optimize-img>
+      </div>
+      <div class="card">
+        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=10&h=10&fit=crop" data-optimize-img>
+      </div>
+      <div class="card">
+        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=10" data-optimize-img>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      new Imgix.Optimizer();
+    })();
+
+  </script>
+</body>
+
+</html>
