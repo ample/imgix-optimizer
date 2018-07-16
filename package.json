@@ -1,7 +1,6 @@
 {
   "name": "imgix-optimizer",
   "version": "0.0.1",
-  "browser": "dist/imgix-optimizer.js",
   "dependencies": {
     "ms": "^2.0.0"
   },

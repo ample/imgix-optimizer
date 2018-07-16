@@ -9,7 +9,7 @@ export default [
     input: 'src/main.js',
     output: {
       name: 'ImgixOptimizer',
-      file: pkg.browser,
+      file: `dist/${pkg.name}-${pkg.version}.js`,
       format: 'iife'
     },
     plugins: [
