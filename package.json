@@ -1,9 +1,6 @@
 {
   "name": "imgix-optimizer",
   "version": "0.0.1",
-  "dependencies": {
-    "ms": "^2.0.0"
-  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
@@ -21,6 +18,7 @@
     "pretest": "npm run build"
   },
   "files": [
-    "dist"
-  ]
+    "dist/*.js"
+  ],
+  "license": "MIT"
 }
