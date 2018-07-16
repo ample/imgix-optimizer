@@ -20,7 +20,7 @@ export default class ImgixBgImage {
    */
   initOptimization() {
     $('<img>')
-      .on('load', $.proxy(this.renderTmpPlaceholderEl, this))
+      .on('load', () => this.renderTmpPlaceholderEl())
       .attr('src', this.placeholderImgUrl);
   }
 
@@ -153,9 +153,25 @@ export default class ImgixBgImage {
    * of the main element.
    */
   setFullSizeImgUrl() {
-    this.fullSizeImgUrl = this.placeholderImgUrl
-      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.el.width())
-      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.el.height());
+    let url = this.placeholderImgUrl.split('?');
+    let q = url[url.length - 1].split('&');
+    let args = {};
+    q.map((x) => args[x.split('=')[0]] = x.split('=')[1]);
+
+    if (this.el.width() >= this.el.height()) {
+      args['w'] = this.el.width();
+      delete args['h'];
+    } else {
+      args['h'] = this.el.height();
+      delete args['w'];
+    }
+
+    q = [];
+    for (let k in args) {
+      q.push(`${k}=${args[k]}`);
+    }
+
+    this.fullSizeImgUrl = `${url[0]}?${q.join('&')}`;
   }
 
   /**
@@ -193,12 +209,12 @@ export default class ImgixBgImage {
    * main element
    */
   transitionImg() {
-    this.fadeOuttmpPlaceholderEl();
-    setTimeout($.proxy(function() {
+    this.fadeOutTmpPlaceholderEl();
+    setTimeout(() => {
       this.updateElImg();
       this.replaceElTmpCss();
       this.removeTmpEls();
-    }, this), this.timeToFade);
+    }, this.timeToFade);
   }
 
   /**
@@ -209,7 +225,7 @@ export default class ImgixBgImage {
    * to transparent. That is why fading out this temporary image will work
    * properly.
    */
-  fadeOuttmpPlaceholderEl() {
+  fadeOutTmpPlaceholderEl() {
     this.tmpPlaceholderEl.fadeTo(this.timeToFade, 0);
   }
 
@@ -255,7 +271,9 @@ export default class ImgixBgImage {
    */
   initResizeEnd() {
     $(window).resize(function() {
-      if (this.resizeTo) { clearTimeout(this.resizeTo) }
+      if (this.resizeTo) {
+        clearTimeout(this.resizeTo)
+      }
       this.resizeTo = setTimeout(function() {
         $(this).trigger('resizeEnd');
       }, 500);

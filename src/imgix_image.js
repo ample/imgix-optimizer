@@ -92,7 +92,7 @@ export default class ImgixImage {
    * because we need imgix to do its thing directly in the DOM.
    */
   initTransition() {
-    this.fullSizeImg.on('load', $.proxy(this.transitionImg, this));
+    this.fullSizeImg.on('load', () => this.transitionImg());
     imgix.init();
   }
 
@@ -107,11 +107,12 @@ export default class ImgixImage {
    * any more.
    */
   transitionImg() {
+    if (!this.placeholderImg) return true;
     this.fadeOutPlaceholder();
-    setTimeout($.proxy(function() {
+    setTimeout(() => {
       this.removeFullSizeImgProperties();
       this.removeImg();
-    }, this), this.timeToFade);
+    }, this.timeToFade);
   }
 
   /**
@@ -139,5 +140,4 @@ export default class ImgixImage {
     this.placeholderImg.remove();
     this.placeholderImg = undefined;
   }
-
 }
