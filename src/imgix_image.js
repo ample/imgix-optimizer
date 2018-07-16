@@ -2,7 +2,7 @@ export default class ImgixImage {
 
   constructor(img) {
     // Length of crossfade transition.
-    this.timeToFade = 1000;
+    this.timeToFade = 500;
     // Main (pixellated placeholder) image.
     this.placeholderImg = $(img);
     // Kick off the optimization process.
