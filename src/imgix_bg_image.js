@@ -9,6 +9,8 @@ export default class ImgixBgImage {
     this.initEl();
     // Kick off the optimization process.
     this.initOptimization();
+    // Listen for window resize events.
+    this.initEventListeners();
   }
 
   /**
@@ -235,5 +237,28 @@ export default class ImgixBgImage {
     this.tmpFullSizeEl.remove();
     this.tmpPlaceholderEl = undefined;
     this.tmpFullSizeEl = undefined;
+  }
+
+  // ---------------------------------------- | Event Listeners
+
+  /**
+   * Listener for window resize events and update the image when the event ends.
+   */
+  initEventListeners() {
+    this.initResizeEnd();
+    $(window).on('resizeEnd', (event) => this.updateElImg());
+  }
+
+  /**
+   * Trigger "resizeEnd" event on the window object after resizing has ceased
+   * for at least 0.5 seconds.
+   */
+  initResizeEnd() {
+    $(window).resize(function() {
+      if (this.resizeTo) { clearTimeout(this.resizeTo) }
+      this.resizeTo = setTimeout(function() {
+        $(this).trigger('resizeEnd');
+      }, 500);
+    });
   }
 }
