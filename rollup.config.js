@@ -2,7 +2,7 @@ import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import resolve from 'rollup-plugin-node-resolve';
-import serve from 'rollup-plugin-serve';
+import { uglify } from 'rollup-plugin-uglify';
 
 export default [
   {
@@ -16,7 +16,7 @@ export default [
       resolve(),
       commonjs(),
       babel({ exclude: 'node_modules/**' }),
-      serve('dist')
+      uglify()
     ]
   }
 ];
