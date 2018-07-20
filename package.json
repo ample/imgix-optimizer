@@ -7,12 +7,14 @@
     "rollup": "^0.60.0",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-delete": "^0.1.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-uglify": "^4.0.0"
   },
   "scripts": {
-    "build": "rollup -c",
+    "copy": "cp dist/*.js vendor/assets/javascripts/",
+    "build": "rollup -c && npm run copy",
     "dev": "rollup -c ./rollup.config.dev.js -w",
     "test": "node test/test.js",
     "pretest": "npm run build"
