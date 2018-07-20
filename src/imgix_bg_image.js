@@ -5,6 +5,8 @@ export default class ImgixBgImage {
     this.timeToFade = 500;
     // The primary element (i.e. the one with the background image).
     this.el = $(el);
+    // Background image CSS property must be present.
+    if (this.el.css('background-image') == 'none') { return }
     // Prepare the element and its container for optimization.
     this.initEl();
     // Kick off the optimization process.
@@ -43,7 +45,9 @@ export default class ImgixBgImage {
     this.placeholderImgUrl = this.el.css('background-image')
       .replace('url(', '')
       .replace(')', '')
-      .replace(/\"/gi, "");
+      .replace(/\"/gi, "")
+      .replace(/\'/gi, "")
+      .split(', ')[0];
   }
 
   /**
