@@ -16,8 +16,10 @@ export default class Optimizer {
     const defaultOptions = {
       parent: 'body'
     }
-    for (const [key, value] of Object.entries(defaultOptions)) {
-      if (!this.options[key]) { this.options[key] = value; }
+    for (let key in defaultOptions) {
+      if (defaultOptions.hasOwnProperty(key) && !this.options[key]) {
+        this.options[key] = defaultOptions[key];
+      }
     }
   }
 
