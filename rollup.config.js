@@ -6,13 +6,11 @@ import del from 'rollup-plugin-delete';
 import resolve from 'rollup-plugin-node-resolve';
 import { uglify } from 'rollup-plugin-uglify';
 
-const outputBasename = `${pkg.name}-${pkg.version}`;
-
 export default [{
     input: 'src/main.js',
     output: {
       name: 'ImgixOptimizer',
-      file: `dist/${outputBasename}.js`,
+      file: `dist/${pkg.name}.js`,
       format: 'iife'
     },
     plugins: [
@@ -27,7 +25,7 @@ export default [{
     input: 'src/main.js',
     output: {
       name: 'ImgixOptimizer',
-      file: `dist/${outputBasename}.min.js`,
+      file: `dist/${pkg.name}-${pkg.version}.min.js`,
       format: 'iife'
     },
     plugins: [

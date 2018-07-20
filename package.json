@@ -13,7 +13,7 @@
     "rollup-plugin-uglify": "^4.0.0"
   },
   "scripts": {
-    "copy": "cp dist/*.js vendor/assets/javascripts/",
+    "copy": "cp dist/imgix-optimizer.js vendor/assets/javascripts/",
     "build": "rollup -c && npm run copy",
     "dev": "rollup -c ./rollup.config.dev.js -w",
     "test": "node test/test.js",
