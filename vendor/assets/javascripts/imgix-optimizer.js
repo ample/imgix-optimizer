@@ -5,204 +5,18 @@
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  var ImgixImage = function () {
-    function ImgixImage(img) {
-      _classCallCheck(this, ImgixImage);
-
-      // Length of crossfade transition.
-      this.timeToFade = 500;
-      // Main (pixellated placeholder) image.
-      this.placeholderImg = $(img);
-      // Kick off the optimization process.
-      this.initOptimization();
-    }
-
-    /**
-     * Load an image in memory (not within the DOM) with the same source as the
-     * placeholder image. Once that has completed, we know we're safe to begin
-     * processing.
-     */
-
-
-    _createClass(ImgixImage, [{
-      key: 'initOptimization',
-      value: function initOptimization() {
-        $('<img>').on('load', $.proxy(this.renderFullSizeImg, this)).attr('src', this.placeholderImg.attr('src'));
-      }
-
-      // ---------------------------------------- | Full-Size Image
-
-      /**
-       * Render the full-size image behind the placeholder image.
-       */
-
-    }, {
-      key: 'renderFullSizeImg',
-      value: function renderFullSizeImg() {
-        this.initFullSizeImg();
-        this.setFullSizeImgTempCss();
-        this.setFullSizeImgSrc();
-        this.addFullSizeImgToDom();
-        this.initTransition();
-      }
-
-      /**
-       * The full-size image is a clone of the placeholder image. This enables us to
-       * easily replace it without losing any necessary styles or attributes.
-       */
-
-    }, {
-      key: 'initFullSizeImg',
-      value: function initFullSizeImg() {
-        this.fullSizeImg = this.placeholderImg.clone();
-      }
-
-      /**
-       * Give the full-size image a temporary set of CSS rules so that it can sit
-       * directly behind the placeholder image while loading.
-       */
-
-    }, {
-      key: 'setFullSizeImgTempCss',
-      value: function setFullSizeImgTempCss() {
-        this.fullSizeImg.css({
-          position: 'absolute',
-          top: this.placeholderImg.position().top,
-          left: this.placeholderImg.position().left,
-          width: this.placeholderImg.width(),
-          height: this.placeholderImg.height()
-        });
-      }
-
-      /**
-       * Prep the full-size image with the attributes necessary to become its full
-       * size. Right now it is still just a replica of the placeholder, sitting
-       * right behind the placeholder.
-       *
-       * We set the src directly even though we're using imgix.js because older
-       * browsers don't support the srcset attribute which is what imgix.js relies
-       * upon.
-       */
-
-    }, {
-      key: 'setFullSizeImgSrc',
-      value: function setFullSizeImgSrc() {
-        var newSrc = this.placeholderImg.attr('src').replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width()).replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
-        this.fullSizeImg.attr('ix-src', newSrc);
-        // TODO: Make this a configurable option or document it as a more semantic temporary class
-        this.fullSizeImg.addClass('img-responsive tmp-img-placeholder');
-        // TODO: This should respect the option from the Optimizer class for the select
-        this.fullSizeImg.removeAttr('data-optimize-img');
-      }
-
-      /**
-       * Render the full-size image in the DOM.
-       */
-
-    }, {
-      key: 'addFullSizeImgToDom',
-      value: function addFullSizeImgToDom() {
-        this.fullSizeImg.insertBefore(this.placeholderImg);
-      }
-
-      // ---------------------------------------- | Image Transition
-
-      /**
-       * Once the full-size image is loaded, begin the transition. This is the
-       * critical piece of this process. Imgix.js uses the ix-src attribute to build
-       * out the srcset attribute. Then, based on the sizes attribute, the browser
-       * determines which source to render. Therefore we can't preload in memory
-       * because we need imgix to do its thing directly in the DOM.
-       */
-
-    }, {
-      key: 'initTransition',
-      value: function initTransition() {
-        var _this = this;
-
-        this.fullSizeImg.on('load', function () {
-          return _this.transitionImg();
-        });
-        imgix.init();
-      }
-
-      /**
-       * Fade out the placeholder image, effectively showing the image behind it.
-       *
-       * Once the fade out transition has completed, remove any temporary properties
-       * from the full-size image (so it gets back to being a clone of the
-       * placeholder, with the full-size src).
-       *
-       * Finally, remove the placeholder image from the DOM since we don't need it
-       * any more.
-       */
-
-    }, {
-      key: 'transitionImg',
-      value: function transitionImg() {
-        var _this2 = this;
-
-        if (!this.placeholderImg) return true;
-        this.fadeOutPlaceholder();
-        setTimeout(function () {
-          _this2.removeFullSizeImgProperties();
-          _this2.removeImg();
-        }, this.timeToFade);
-      }
-
-      /**
-       * Fade out the placeholder image.
-       */
-
-    }, {
-      key: 'fadeOutPlaceholder',
-      value: function fadeOutPlaceholder() {
-        this.placeholderImg.fadeTo(this.timeToFade, 0);
-      }
-
-      /**
-       * Remove temporary styles and class from the full-size image, which
-       * effectively means it has replaced the placeholder image.
-       */
-
-    }, {
-      key: 'removeFullSizeImgProperties',
-      value: function removeFullSizeImgProperties() {
-        this.fullSizeImg.removeAttr('style');
-        // TODO: Update this with how the class is handled above.
-        this.fullSizeImg.removeClass('tmp-img-placeholder');
-      }
-
-      /**
-       * Remove the placeholder image from the DOM since we no longer need it.
-       */
-
-    }, {
-      key: 'removeImg',
-      value: function removeImg() {
-        if (!this.placeholderImg) {
-          return;
-        }
-        this.placeholderImg.remove();
-        this.placeholderImg = undefined;
-      }
-    }]);
-
-    return ImgixImage;
-  }();
-
-  var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-  function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
   var ImgixBgImage = function () {
     function ImgixBgImage(el) {
-      _classCallCheck$1(this, ImgixBgImage);
+      _classCallCheck(this, ImgixBgImage);
 
       // Length of time to complete fade-in transition.
       this.timeToFade = 500;
       // The primary element (i.e. the one with the background image).
       this.el = $(el);
+      // Background image CSS property must be present.
+      if (this.el.css('background-image') == 'none') {
+        return;
+      }
       // Prepare the element and its container for optimization.
       this.initEl();
       // Kick off the optimization process.
@@ -218,7 +32,7 @@
      */
 
 
-    _createClass$1(ImgixBgImage, [{
+    _createClass(ImgixBgImage, [{
       key: 'initOptimization',
       value: function initOptimization() {
         var _this = this;
@@ -250,7 +64,7 @@
     }, {
       key: 'setPlaceholderImgUrl',
       value: function setPlaceholderImgUrl() {
-        this.placeholderImgUrl = this.el.css('background-image').replace('url(', '').replace(')', '').replace(/\"/gi, "");
+        this.placeholderImgUrl = this.el.css('background-image').replace('url(', '').replace(')', '').replace(/\"/gi, "").replace(/\'/gi, "").split(', ')[0];
       }
 
       /**
@@ -564,6 +378,196 @@
     return ImgixBgImage;
   }();
 
+  var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  var ImgixImage = function () {
+    function ImgixImage(img) {
+      _classCallCheck$1(this, ImgixImage);
+
+      // Length of crossfade transition.
+      this.timeToFade = 500;
+      // Main (pixellated placeholder) image.
+      this.placeholderImg = $(img);
+      // Kick off the optimization process.
+      this.initOptimization();
+    }
+
+    /**
+     * Load an image in memory (not within the DOM) with the same source as the
+     * placeholder image. Once that has completed, we know we're safe to begin
+     * processing.
+     */
+
+
+    _createClass$1(ImgixImage, [{
+      key: 'initOptimization',
+      value: function initOptimization() {
+        $('<img>').on('load', $.proxy(this.renderFullSizeImg, this)).attr('src', this.placeholderImg.attr('src'));
+      }
+
+      // ---------------------------------------- | Full-Size Image
+
+      /**
+       * Render the full-size image behind the placeholder image.
+       */
+
+    }, {
+      key: 'renderFullSizeImg',
+      value: function renderFullSizeImg() {
+        this.initFullSizeImg();
+        this.setFullSizeImgTempCss();
+        this.setFullSizeImgSrc();
+        this.addFullSizeImgToDom();
+        this.initTransition();
+      }
+
+      /**
+       * The full-size image is a clone of the placeholder image. This enables us to
+       * easily replace it without losing any necessary styles or attributes.
+       */
+
+    }, {
+      key: 'initFullSizeImg',
+      value: function initFullSizeImg() {
+        this.fullSizeImg = this.placeholderImg.clone();
+      }
+
+      /**
+       * Give the full-size image a temporary set of CSS rules so that it can sit
+       * directly behind the placeholder image while loading.
+       */
+
+    }, {
+      key: 'setFullSizeImgTempCss',
+      value: function setFullSizeImgTempCss() {
+        this.fullSizeImg.css({
+          position: 'absolute',
+          top: this.placeholderImg.position().top,
+          left: this.placeholderImg.position().left,
+          width: this.placeholderImg.width(),
+          height: this.placeholderImg.height()
+        });
+      }
+
+      /**
+       * Prep the full-size image with the attributes necessary to become its full
+       * size. Right now it is still just a replica of the placeholder, sitting
+       * right behind the placeholder.
+       *
+       * We set the src directly even though we're using imgix.js because older
+       * browsers don't support the srcset attribute which is what imgix.js relies
+       * upon.
+       */
+
+    }, {
+      key: 'setFullSizeImgSrc',
+      value: function setFullSizeImgSrc() {
+        var newSrc = this.placeholderImg.attr('src').replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width()).replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
+        this.fullSizeImg.attr('ix-src', newSrc);
+        // TODO: Make this a configurable option or document it as a more semantic temporary class
+        this.fullSizeImg.addClass('img-responsive tmp-img-placeholder');
+        // TODO: This should respect the option from the Optimizer class for the select
+        this.fullSizeImg.removeAttr('data-optimize-img');
+      }
+
+      /**
+       * Render the full-size image in the DOM.
+       */
+
+    }, {
+      key: 'addFullSizeImgToDom',
+      value: function addFullSizeImgToDom() {
+        this.fullSizeImg.insertBefore(this.placeholderImg);
+      }
+
+      // ---------------------------------------- | Image Transition
+
+      /**
+       * Once the full-size image is loaded, begin the transition. This is the
+       * critical piece of this process. Imgix.js uses the ix-src attribute to build
+       * out the srcset attribute. Then, based on the sizes attribute, the browser
+       * determines which source to render. Therefore we can't preload in memory
+       * because we need imgix to do its thing directly in the DOM.
+       */
+
+    }, {
+      key: 'initTransition',
+      value: function initTransition() {
+        var _this = this;
+
+        this.fullSizeImg.on('load', function () {
+          return _this.transitionImg();
+        });
+        imgix.init();
+      }
+
+      /**
+       * Fade out the placeholder image, effectively showing the image behind it.
+       *
+       * Once the fade out transition has completed, remove any temporary properties
+       * from the full-size image (so it gets back to being a clone of the
+       * placeholder, with the full-size src).
+       *
+       * Finally, remove the placeholder image from the DOM since we don't need it
+       * any more.
+       */
+
+    }, {
+      key: 'transitionImg',
+      value: function transitionImg() {
+        var _this2 = this;
+
+        if (!this.placeholderImg) return true;
+        this.fadeOutPlaceholder();
+        setTimeout(function () {
+          _this2.removeFullSizeImgProperties();
+          _this2.removeImg();
+        }, this.timeToFade);
+      }
+
+      /**
+       * Fade out the placeholder image.
+       */
+
+    }, {
+      key: 'fadeOutPlaceholder',
+      value: function fadeOutPlaceholder() {
+        this.placeholderImg.fadeTo(this.timeToFade, 0);
+      }
+
+      /**
+       * Remove temporary styles and class from the full-size image, which
+       * effectively means it has replaced the placeholder image.
+       */
+
+    }, {
+      key: 'removeFullSizeImgProperties',
+      value: function removeFullSizeImgProperties() {
+        this.fullSizeImg.removeAttr('style');
+        // TODO: Update this with how the class is handled above.
+        this.fullSizeImg.removeClass('tmp-img-placeholder');
+      }
+
+      /**
+       * Remove the placeholder image from the DOM since we no longer need it.
+       */
+
+    }, {
+      key: 'removeImg',
+      value: function removeImg() {
+        if (!this.placeholderImg) {
+          return;
+        }
+        this.placeholderImg.remove();
+        this.placeholderImg = undefined;
+      }
+    }]);
+
+    return ImgixImage;
+  }();
+
   var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
   var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -693,6 +697,8 @@
 
   window['Imgix'] = window['Imgix'] || {};
 
+  Imgix.ImgixBgImage = ImgixBgImage;
+  Imgix.ImgixImage = ImgixImage;
   Imgix.Optimizer = Optimizer;
 
 }());
