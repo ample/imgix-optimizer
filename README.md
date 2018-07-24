@@ -18,9 +18,25 @@ This also assumes your project is already configured to [work with imgix](https:
 Installation
 ----------
 
-First, make sure all your [requirements](#requirements) are in place, then install this package and its dependencies:
+Once your requirements are in place, you can install the script as an NPM package or a ruby gem.
+
+### NPM Package
+
+Use the `npm` command-line utility to install this package and its dependencies:
 
     $ npm i imgix-optimizer --save
+
+### Ruby Gem
+
+If working with a Ruby project, add the gem to your Gemfile:
+
+```rb
+gem 'imgix-optimizer'
+```
+
+And then install with Bundler:
+
+    $ bundle install
 
 Usage
 ----------
