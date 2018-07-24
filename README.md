@@ -97,7 +97,7 @@ So, for example, if you'd like to load a square placeholder image using the abov
 
 Here's an example of what that might look like:
 
-<img src="https://images.unsplash.com/photo-1487222444179-52db5bc15efe?w=10&h=10&fit=crop" style="width: 250px;">
+<img src="https://images.unsplash.com/photo-1487222444179-52db5bc15efe?w=10&h=10&fit=crop" width="250">
 
 #### Inline Images
 
