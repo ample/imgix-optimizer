@@ -26,17 +26,18 @@ export default class Optimizer {
   // ---------------------------------------- | Inline Images
 
   optimizeImages() {
-    for (const img of $(`${this.options.parent} img[data-optimize-img]`)) {
+    $(`${this.options.parent} img[data-optimize-img]`).each((idx, img) => {
       new ImgixImage(img);
-    }
+    });
   }
 
   // ---------------------------------------- | Background Images
 
   optimizeBgImages() {
-    for (const img of $(`${this.options.parent} [data-optimize-bg-img]`)) {
+    $(`${this.options.parent} [data-optimize-bg-img]`).each((idx, img) => {
       new ImgixBgImage(img);
-    }
+    });
+    return true;
   }
 
 }

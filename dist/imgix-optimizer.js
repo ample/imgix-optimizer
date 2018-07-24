@@ -615,30 +615,9 @@
     }, {
       key: 'optimizeImages',
       value: function optimizeImages() {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = $(this.options.parent + ' img[data-optimize-img]')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var img = _step.value;
-
-            new ImgixImage(img);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        $(this.options.parent + ' img[data-optimize-img]').each(function (idx, img) {
+          new ImgixImage(img);
+        });
       }
 
       // ---------------------------------------- | Background Images
@@ -646,30 +625,10 @@
     }, {
       key: 'optimizeBgImages',
       value: function optimizeBgImages() {
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
-
-        try {
-          for (var _iterator2 = $(this.options.parent + ' [data-optimize-bg-img]')[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var img = _step2.value;
-
-            new ImgixBgImage(img);
-          }
-        } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-              _iterator2.return();
-            }
-          } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
-            }
-          }
-        }
+        $(this.options.parent + ' [data-optimize-bg-img]').each(function (idx, img) {
+          new ImgixBgImage(img);
+        });
+        return true;
       }
     }]);
     return Optimizer;
