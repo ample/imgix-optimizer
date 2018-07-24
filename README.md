@@ -84,7 +84,7 @@ Given this flexibility, we can add pixelated placeholder images by loading reall
 So, for example, if you'd like to load a square placeholder image using the above source, you might make it `10px x 10px`, like so:
 
 ```html
-<img src="https://images.unsplash.com/photo-1487222444179-52db5bc15efe?w=100&h=100&fit=crop" class="my-placeholder">
+<img src="https://images.unsplash.com/photo-1487222444179-52db5bc15efe?w=10&h=10&fit=crop" class="my-placeholder">
 ```
 
 ```css
