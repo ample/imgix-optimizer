@@ -1,13 +1,33 @@
 (function () {
   'use strict';
 
-  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+  var classCallCheck = function (instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  };
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  var createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
 
   var ImgixBgImage = function () {
     function ImgixBgImage(el) {
-      _classCallCheck(this, ImgixBgImage);
+      classCallCheck(this, ImgixBgImage);
 
       // Length of time to complete fade-in transition.
       this.timeToFade = 500;
@@ -32,7 +52,7 @@
      */
 
 
-    _createClass(ImgixBgImage, [{
+    createClass(ImgixBgImage, [{
       key: 'initOptimization',
       value: function initOptimization() {
         var _this = this;
@@ -374,17 +394,12 @@
         });
       }
     }]);
-
     return ImgixBgImage;
   }();
 
-  var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-  function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
   var ImgixImage = function () {
     function ImgixImage(img) {
-      _classCallCheck$1(this, ImgixImage);
+      classCallCheck(this, ImgixImage);
 
       // Length of crossfade transition.
       this.timeToFade = 500;
@@ -401,7 +416,7 @@
      */
 
 
-    _createClass$1(ImgixImage, [{
+    createClass(ImgixImage, [{
       key: 'initOptimization',
       value: function initOptimization() {
         $('<img>').on('load', $.proxy(this.renderFullSizeImg, this)).attr('src', this.placeholderImg.attr('src'));
@@ -564,19 +579,13 @@
         this.placeholderImg = undefined;
       }
     }]);
-
     return ImgixImage;
   }();
-
-  var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-  function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
   var Optimizer = function () {
     function Optimizer() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck$2(this, Optimizer);
+      classCallCheck(this, Optimizer);
 
       this.initOptions(options);
       this.optimizeImages();
@@ -585,7 +594,7 @@
 
     // ---------------------------------------- | Options
 
-    _createClass$2(Optimizer, [{
+    createClass(Optimizer, [{
       key: 'initOptions',
       value: function initOptions() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -663,7 +672,6 @@
         }
       }
     }]);
-
     return Optimizer;
   }();
 

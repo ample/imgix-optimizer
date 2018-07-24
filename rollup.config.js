@@ -17,7 +17,13 @@ export default [{
       del({ targets: ['dist/imgix-optimizer*', 'vendor/assets/javascripts/*.js'] }),
       resolve(),
       commonjs(),
-      babel({ exclude: 'node_modules/**' })
+      babel({
+        exclude: 'node_modules/**',
+        babelrc: false,
+        presets: [
+          'es2015-rollup'
+        ]
+      })
     ]
   },
   // --- MINIFIED ---
@@ -31,7 +37,13 @@ export default [{
     plugins: [
       resolve(),
       commonjs(),
-      babel({ exclude: 'node_modules/**' }),
+      babel({
+        exclude: 'node_modules/**',
+        babelrc: false,
+        presets: [
+          'es2015-rollup'
+        ]
+      }),
       uglify()
     ]
   }
