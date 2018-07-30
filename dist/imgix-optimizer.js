@@ -31,6 +31,8 @@
 
       // Length of time to complete fade-in transition.
       this.timeToFade = 500;
+      // Device pixel ratio assumes 1 if not set.
+      this.dpr = window['devicePixelRatio'] || 1;
       // The primary element (i.e. the one with the background image).
       this.el = $(el);
       // Background image CSS property must be present.
@@ -237,11 +239,11 @@
         });
         // If the image's container is wider than it is tall, we only set width and
         // unset height, and vice versa.
-        if (this.el.width() >= this.el.height()) {
-          args['w'] = this.el.width();
+        if (this.el.outerWidth() >= this.el.outerHeight()) {
+          args['w'] = this.el.outerWidth() * this.dpr;
           delete args['h'];
         } else {
-          args['h'] = this.el.height();
+          args['h'] = this.el.outerHeight() * this.dpr;
           delete args['w'];
         }
         // Redefine q and go the other direction -- take the args object and convert
