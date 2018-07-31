@@ -3,8 +3,10 @@ export default class ImgixImage {
   constructor(img) {
     // Length of crossfade transition.
     this.timeToFade = 500;
-    // Main (pixellated placeholder) image.
+    // The main image (pixelated placeholder).
     this.placeholderImg = $(img);
+    // Configure the main placeholder image.
+    this.initPlaceholder();
     // Kick off the optimization process.
     this.initOptimization();
   }
@@ -18,6 +20,26 @@ export default class ImgixImage {
     $('<img>')
       .on('load', $.proxy(this.renderFullSizeImg, this))
       .attr('src', this.placeholderImg.attr('src'));
+  }
+
+  // ---------------------------------------- | Placeholder Image
+
+  /**
+   * Make necessary CSS adjustments to main placeholder image.
+   */
+  initPlaceholder() {
+    this.setPlaceholderCss();
+  }
+
+  /**
+   * The main image must have a position set for it to remain in front of the
+   * full-size image. We assume that if the element is not explicitly positioned
+   * absolutely, then it can safely be positioned relatively.
+   */
+  setPlaceholderCss() {
+    if (this.placeholderImg.css('position') != 'absolute') {
+      this.placeholderImg.css('position', 'relative');
+    }
   }
 
   // ---------------------------------------- | Full-Size Image

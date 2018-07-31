@@ -1,6 +1,6 @@
 {
   "name": "imgix-optimizer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-es2015-rollup": "^3.0.0",
