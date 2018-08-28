@@ -92,7 +92,7 @@ export default class ImgixImage {
       .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
     this.fullSizeImg.attr('ix-src', newSrc);
     // TODO: Make this a configurable option or document it as a more semantic temporary class
-    this.fullSizeImg.addClass('img-responsive tmp-img-placeholder');
+    this.fullSizeImg.addClass('img-responsive imgix-optimizing');
     // TODO: This should respect the option from the Optimizer class for the select
     this.fullSizeImg.removeAttr('data-optimize-img');
   }
@@ -151,7 +151,7 @@ export default class ImgixImage {
   removeFullSizeImgProperties() {
     this.fullSizeImg.removeAttr('style');
     // TODO: Update this with how the class is handled above.
-    this.fullSizeImg.removeClass('tmp-img-placeholder');
+    this.fullSizeImg.removeClass('imgix-optimizing');
   }
 
   /**

@@ -99,6 +99,7 @@ export default class ImgixBgImage {
    * Position the clone directly behind the main element
    */
   setTmpPlaceholderElCss() {
+    this.tmpPlaceholderEl.addClass('imgix-optimizing');
     this.tmpPlaceholderEl.css({
       position: 'absolute',
       top: this.el.position().top,
