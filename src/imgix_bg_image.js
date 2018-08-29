@@ -58,7 +58,14 @@ export default class ImgixBgImage {
    * correct location.
    */
   setContainerTmpCss() {
-    this.el.parent().css('position', 'relative');
+    this.parentStyles = {
+      display: this.el.parent().css('display'),
+      position: this.el.parent().css('position')
+    }
+    this.el.parent().css({
+      display: 'block',
+      position: 'relative'
+    });
   }
 
   /**
@@ -225,6 +232,7 @@ export default class ImgixBgImage {
     setTimeout(() => {
       this.updateElImg();
       this.replaceElTmpCss();
+      this.replaceContainerTmpCss();
       this.removeTmpEls();
     }, this.timeToFade);
   }
@@ -255,6 +263,16 @@ export default class ImgixBgImage {
    */
   replaceElTmpCss() {
     this.el.css('background-color', this.elBgColor);
+  }
+
+  /**
+   * Reset the container's adjusted CSS properties.
+   */
+  replaceContainerTmpCss() {
+    this.el.parent().css({
+      display: this.parentStyles.display,
+      position: this.parentStyles.position
+    });
   }
 
   /**
