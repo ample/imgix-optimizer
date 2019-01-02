@@ -1,8 +1,9 @@
-export default class ImgixImage {
-
+export default class Image {
   constructor(img) {
     // Length of crossfade transition.
     this.timeToFade = 500;
+    // Data attribute applied before processing.
+    this.processingAttr = 'data-imgix-img-processed';
     // The main image (pixelated placeholder).
     this.placeholderImg = $(img);
     // Configure the main placeholder image.
@@ -14,12 +15,34 @@ export default class ImgixImage {
   /**
    * Load an image in memory (not within the DOM) with the same source as the
    * placeholder image. Once that has completed, we know we're safe to begin
-   * processing.
+   * listening for the image to intersect the viewport.
    */
   initOptimization() {
     $('<img>')
-      .on('load', $.proxy(this.renderFullSizeImg, this))
+      .on('load', $.proxy(this.listenForIntersection, this))
       .attr('src', this.placeholderImg.attr('src'));
+  }
+
+  /**
+   * When the placeholder image intersects the viewport, begin processing.
+   * (IntersectionObserver and Object.assign() are not supported by IE, but the
+   * polyfills are loaded by Imgix.Optimizer.)
+   */
+  listenForIntersection() {
+    const observer = new IntersectionObserver($.proxy(this.onIntersection, this));
+    observer.observe(this.placeholderImg[0]);
+  }
+
+  /**
+   * When the placeholder image intersects the viewport, check if it is in the
+   * viewport and has not yet been processed. If those conditions are true,
+   * begin rendering the full size image and the transition process.
+   */
+  onIntersection(entries, observer) {
+    let img = $(entries[0].target);
+    if (!entries[0].isIntersecting || $(img).attr(this.processingAttr)) return;
+    $(img).attr(this.processingAttr, true);
+    this.renderFullSizeImg();
   }
 
   // ---------------------------------------- | Placeholder Image
@@ -87,7 +110,8 @@ export default class ImgixImage {
    * upon.
    */
   setFullSizeImgSrc() {
-    var newSrc = this.placeholderImg.attr('src')
+    var newSrc = this.placeholderImg
+      .attr('src')
       .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width())
       .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
     this.fullSizeImg.attr('ix-src', newSrc);
@@ -158,7 +182,9 @@ export default class ImgixImage {
    * Remove the placeholder image from the DOM since we no longer need it.
    */
   removeImg() {
-    if(!this.placeholderImg) { return }
+    if (!this.placeholderImg) {
+      return;
+    }
     this.placeholderImg.remove();
     this.placeholderImg = undefined;
   }

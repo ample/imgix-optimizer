@@ -1,96 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>IMGIX Optimizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>IMGIX Optimizer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="main.css" />
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="main.css">
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
+    <script src="imgix-optimizer.js"></script>
+  </head>
 
-  <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
-  <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
-  <script src="imgix-optimizer.js"></script>
-</head>
+  <body>
+    <div
+      class="jumbotron"
+      style="background-image: url('https://images.unsplash.com/photo-1527679124583-9208be990bb5?fit=crop&auto=compress,format&w=16&h=9');"
+      data-optimize-bg-img
+    >
+      <h1 class="display-4">Hello, world!</h1>
+      <p class="lead">
+        This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content
+        or information.
+      </p>
+      <hr class="my-4" />
+      <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </div>
 
-<body>
+    <div class="container">
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum laboriosam similique accusantium animi repellat,
+        quidem, soluta laborum voluptatum optio molestias deleniti sed illum quaerat neque excepturi placeat omnis velit
+        quibusdam?
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, commodi corrupti? Fugit eligendi perferendis
+        veritatis ipsum consectetur sit qui accusamus omnis perspiciatis consequuntur beatae hic, provident nam quo
+        laboriosam atque!
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni laborum voluptatem odit, explicabo nobis tenetur
+        itaque esse ipsa doloribus amet veniam adipisci at dignissimos eaque facilis repudiandae accusantium similique
+        quidem!
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure excepturi dolorem porro tempore iusto ipsum
+        ratione cumque, dolores eaque illo voluptatum nisi sequi nobis dignissimos? Tempora voluptates velit asperiores
+        pariatur.
+      </p>
+      <p>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro reiciendis magni qui distinctio dolorum deleniti
+        necessitatibus voluptate eveniet cupiditate, sit amet blanditiis eos esse numquam, veniam aperiam repellat quae
+        exercitationem.
+      </p>
+    </div>
 
-  <div class="jumbotron" style="background-image: url('https://images.unsplash.com/photo-1525489196064-0752fa4e16f2?fit=crop&auto=compress,format&w=16&h=9');" data-optimize-bg-img>
-    <h1 class="display-4">Hello, world!</h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-    <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </div>
-
-  <div class="container my-5">
-    <div class="card-columns">
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=16&h=9&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=12&h=9&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=10&h=10&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/1lYeb5zu9OyYsYKI6EQKI4/7334b00d65c03a9c4d643ef626aa5504/kinga-cichewicz-513031-unsplash.jpg?auto=format,compress&w=10" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/6d8DPphRCgSiKKkoSUUkQa/68b3fd217241551f47e17a58a57dbd46/eleni-afiontzi-506015-unsplash.jpg?auto=format,compress&w=16&h=9&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/6d8DPphRCgSiKKkoSUUkQa/68b3fd217241551f47e17a58a57dbd46/eleni-afiontzi-506015-unsplash.jpg?auto=format,compress&w=12&h=9&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/6d8DPphRCgSiKKkoSUUkQa/68b3fd217241551f47e17a58a57dbd46/eleni-afiontzi-506015-unsplash.jpg?auto=format,compress&w=10&h=10&fit=crop" data-optimize-img>
-      </div>
-      <div class="card">
-        <img class="card-img" alt="Card image cap" src="https://crds-media.imgix.net/6d8DPphRCgSiKKkoSUUkQa/68b3fd217241551f47e17a58a57dbd46/eleni-afiontzi-506015-unsplash.jpg?auto=format,compress&w=10" data-optimize-img>
+    <div class="container my-5">
+      <div class="card-columns">
+        <div class="card">
+          <img
+            id="img-1"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1513415277900-a62401e19be4?auto=format,compress&w=16&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-2"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1533540046196-4710d983af1b?auto=format,compress&w=12&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-3"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1503103261350-2d300e6465ea?auto=format,compress&w=10&h=10&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-4"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1544279210-d295b3531dcf?auto=format,compress&w=10"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-5"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1545014393-76c7b8936c76?auto=format,compress&w=16&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-6"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1513791222152-c347a9d6c3dd?auto=format,compress&w=12&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-7"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1472457897821-70d3819a0e24?auto=format,compress&w=10&h=10&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-8"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1523053030199-19a46754261d?auto=format,compress&w=10"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-9"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1543776059-464c383bf3fe?auto=format,compress&w=16&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-10"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1543520098-6b644b73c377?auto=format,compress&w=12&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-11"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1508296389318-bda81b7c8496?auto=format,compress&w=10&h=10&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-12"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1539298960951-d96776a91eb7?auto=format,compress&w=10"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-13"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1534577403868-27b805ca4b9c?auto=format,compress&w=16&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-14"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1517257770456-4310c7575593?auto=format,compress&w=12&h=9&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-15"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1534357808625-fdbecdd0b6da?auto=format,compress&w=10&h=10&fit=crop"
+            data-optimize-img
+          />
+        </div>
+        <div class="card">
+          <img
+            id="img-16"
+            class="card-img"
+            alt="Card image cap"
+            src="https://images.unsplash.com/photo-1517134062979-e1234be8a085?auto=format,compress&w=10"
+            data-optimize-img
+          />
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <h4 class="font-family-condensed-extra font-size-h3 text-uppercase">2018 Series</h4>
-    <!-- Past series: Current year -->
-    <div class="row">
-      <div class="col-xs-12 col-md-4">
-        <a href="/series/spark-2018" title="Spark 2018">
-          <img class="push-bottom img-full-width"   src="//crds-media-int.imgix.net/5oKn4CG5u8qS8YMEugiGyo/4c962a693490aab72f0429189d21873e/crossroads-spark-2018.jpg?auto=format,compress&w=16&h=9&fit=crop" alt="Spark 2018" data-optimize-img>
-        </a>
-      </div>
-
-      <div class="col-xs-12 col-md-4">
-        <a href="/series/spirit-realm" title="Spirit Realm">
-          <img class="push-bottom img-full-width" src="//crds-media-int.imgix.net/4M9c40S5e8sAYo0GEao6em/235b9b1bb29e2e9d236cb9b07b462ac7/crossroads-spirit-realm.jpg?auto=format,compress&w=16&h=9&fit=crop" alt="Spirit Realm" data-optimize-img>
-        </a>
-      </div>
-
-      <div class="col-xs-12 col-md-4">
-        <a href="/series/where-in-the-world-is-carmen-sandiego" title="Where in the World Is Carmen Sandiego">
-          <img class="push-bottom img-full-width" src="//crds-media-int.imgix.net/3NR06Cto88oCW6ssWwCkoy/eae1889e620f5c4b4627b8b6fc100e49/carmen.jpg?auto=format,compress&w=16&h=9&fit=crop" alt="Where in the World Is Carmen Sandiego" data-optimize-img>
-        </a>
-      </div>
-
-      <div class="col-xs-12 col-md-4">
-        <a href="/series/ipsum-cursus-ornare" title="Ipsum Cursus Ornare">
-          <img class="push-bottom img-full-width" src="//crds-media-int.imgix.net/6tOogMSdyweiYsUIUCIIi6/513d1df4271df6265996244102189efc/joshua-ness-322881-unsplash.jpg?auto=format,compress&w=16&h=9&fit=crop" alt="Ipsum Cursus Ornare" data-optimize-img>
-        </a>
-      </div>
-    </div>
-  </div>
-
-
-  <script>
-    (function() {
-      new Imgix.Optimizer();
-    })();
-
-  </script>
-</body>
-
+    <script>
+      (function() {
+        new Imgix.Optimizer();
+      })();
+    </script>
+  </body>
 </html>
