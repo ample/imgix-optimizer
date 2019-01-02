@@ -6,6 +6,9 @@ export default class BackgroundImage {
     this.processingAttr = 'data-imgix-bg-processed';
     // Device pixel ratio assumes 1 if not set.
     this.dpr = window['devicePixelRatio'] || 1;
+    // The largest image that has been loaded. This assumes the height of the
+    // container will not change.
+    this.largestImageWidth = 0;
     // The primary element (i.e. the one with the background image).
     this.el = $(el);
     // Background image CSS property must be present.
@@ -193,7 +196,13 @@ export default class BackgroundImage {
    * of the main element.
    */
   setFullSizeImgUrl() {
-    // Work with the placeholdler image URL, which has been pulled from the
+    // If the full size image URL exists and if the new size is going to be
+    // smaller than the largest size loaded, then we stick with the largest size
+    // that has been used.
+    if (this.fullSizeImgUrl && this.el.outerWidth() * this.dpr <= this.largestImageWidth) return;
+    // Assume that the new width will be the largest size used.
+    this.largestImageWidth = this.el.outerWidth() * this.dpr;
+    // Work with the placeholder image URL, which has been pulled from the
     // background-image css property of the main elements.
     let url = this.placeholderImgUrl.split('?');
     // q is an array of querystring parameters as ["k=v", "k=v", ...].
@@ -205,7 +214,7 @@ export default class BackgroundImage {
     // If the image's container is wider than it is tall, we only set width and
     // unset height, and vice versa.
     if (this.el.outerWidth() >= this.el.outerHeight()) {
-      args['w'] = this.el.outerWidth() * this.dpr;
+      args['w'] = this.largestImageWidth;
       delete args['h'];
     } else {
       args['h'] = this.el.outerHeight() * this.dpr;
@@ -283,7 +292,9 @@ export default class BackgroundImage {
    */
   updateElImg() {
     this.setFullSizeImgUrl();
-    this.el.css('background-image', `url('${this.fullSizeImgUrl}')`);
+    $('<img>')
+      .on('load', event => this.el.css('background-image', `url('${this.fullSizeImgUrl}')`))
+      .attr('src', this.placeholderImgUrl);
   }
 
   /**
