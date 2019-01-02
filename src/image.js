@@ -41,7 +41,7 @@ export default class Image {
   onIntersection(entries, observer) {
     let img = $(entries[0].target);
     if (!entries[0].isIntersecting || $(img).attr(this.processingAttr)) return;
-    $(img).attr(this.processingAttr, true);
+    img.attr(this.processingAttr, true);
     this.renderFullSizeImg();
   }
 
@@ -95,9 +95,21 @@ export default class Image {
       position: 'absolute',
       top: this.placeholderImg.position().top,
       left: this.placeholderImg.position().left,
-      width: this.placeholderImg.width(),
-      height: this.placeholderImg.height()
+      width: '100%',
+      height: '100%'
     });
+  }
+
+  /**
+   * Return the width and height of the placeholder image, including decimals.
+   * Uses precise measurements like this helps ensure the element doesn't slide
+   * when transitioning to the full size image.
+   */
+  getPlaceholderImgRect() {
+    return {
+      width: this.placeholderImg[0].getBoundingClientRect().width,
+      height: this.placeholderImg[0].getBoundingClientRect().height
+    };
   }
 
   /**
@@ -110,10 +122,15 @@ export default class Image {
    * upon.
    */
   setFullSizeImgSrc() {
-    var newSrc = this.placeholderImg
+    let newSrc = this.placeholderImg
       .attr('src')
-      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width())
-      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
+      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.getPlaceholderImgRect().width)
+      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.getPlaceholderImgRect().height);
+    // Add a height attribute if it is missing. This is the key to the image not
+    // jumping around after transitioning to the full-size image.
+    if (newSrc.search(/(\?|\&)(h=)(\d+)/i) < 0) {
+      newSrc = `${newSrc}&h=${this.getPlaceholderImgRect().height}&fit=crop`;
+    }
     this.fullSizeImg.attr('ix-src', newSrc);
     // TODO: Make this a configurable option or document it as a more semantic temporary class
     this.fullSizeImg.addClass('img-responsive imgix-optimizing');
