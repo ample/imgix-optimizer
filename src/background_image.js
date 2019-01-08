@@ -1,14 +1,20 @@
-export default class ImgixBgImage {
-
+export default class BackgroundImage {
   constructor(el) {
     // Length of time to complete fade-in transition.
     this.timeToFade = 500;
+    // Data attribute applied before processing.
+    this.processingAttr = 'data-imgix-bg-processed';
     // Device pixel ratio assumes 1 if not set.
     this.dpr = window['devicePixelRatio'] || 1;
+    // The largest image that has been loaded. This assumes the height of the
+    // container will not change.
+    this.largestImageWidth = 0;
     // The primary element (i.e. the one with the background image).
     this.el = $(el);
     // Background image CSS property must be present.
-    if (this.el.css('background-image') == 'none') { return }
+    if (this.el.css('background-image') == 'none') {
+      return;
+    }
     // Prepare the element and its container for optimization.
     this.initEl();
     // Kick off the optimization process.
@@ -24,8 +30,30 @@ export default class ImgixBgImage {
    */
   initOptimization() {
     $('<img>')
-      .on('load', () => this.renderTmpPlaceholderEl())
+      .on('load', $.proxy(this.listenForIntersection, this))
       .attr('src', this.placeholderImgUrl);
+  }
+
+  /**
+   * When the element intersects the viewport, begin processing.
+   * (IntersectionObserver and Object.assign() are not supported by IE, but the
+   * polyfills are loaded by Imgix.Optimizer.)
+   */
+  listenForIntersection() {
+    const observer = new IntersectionObserver($.proxy(this.onIntersection, this));
+    observer.observe(this.el[0]);
+  }
+
+  /**
+   * When the element intersects the viewport, check if it is in the viewport
+   * and has not yet been processed. If those conditions are true, begin
+   * rendering the full size image and the transition process.
+   */
+  onIntersection(entries, observer) {
+    let el = $(entries[0].target);
+    if (!entries[0].isIntersecting || $(el).attr(this.processingAttr)) return;
+    $(el).attr(this.processingAttr, true);
+    this.renderTmpPlaceholderEl();
   }
 
   // ---------------------------------------- | Main Element
@@ -44,11 +72,12 @@ export default class ImgixBgImage {
    * placeholder.
    */
   setPlaceholderImgUrl() {
-    this.placeholderImgUrl = this.el.css('background-image')
+    this.placeholderImgUrl = this.el
+      .css('background-image')
       .replace('url(', '')
       .replace(')', '')
-      .replace(/\"/gi, "")
-      .replace(/\'/gi, "")
+      .replace(/\"/gi, '')
+      .replace(/\'/gi, '')
       .split(', ')[0];
   }
 
@@ -61,7 +90,7 @@ export default class ImgixBgImage {
     this.parentStyles = {
       display: this.el.parent().css('display'),
       position: this.el.parent().css('position')
-    }
+    };
     this.el.parent().css({
       display: 'block',
       position: 'relative'
@@ -167,7 +196,13 @@ export default class ImgixBgImage {
    * of the main element.
    */
   setFullSizeImgUrl() {
-    // Work with the placeholdler image URL, which has been pulled from the
+    // If the full size image URL exists and if the new size is going to be
+    // smaller than the largest size loaded, then we stick with the largest size
+    // that has been used.
+    if (this.fullSizeImgUrl && this.el.outerWidth() * this.dpr <= this.largestImageWidth) return;
+    // Assume that the new width will be the largest size used.
+    this.largestImageWidth = this.el.outerWidth() * this.dpr;
+    // Work with the placeholder image URL, which has been pulled from the
     // background-image css property of the main elements.
     let url = this.placeholderImgUrl.split('?');
     // q is an array of querystring parameters as ["k=v", "k=v", ...].
@@ -175,11 +210,11 @@ export default class ImgixBgImage {
     // Mapping q converts the array to an object of querystring parameters as
     // { k: v, k: v, ... }.
     let args = {};
-    q.map((x) => args[x.split('=')[0]] = x.split('=')[1]);
+    q.map(x => (args[x.split('=')[0]] = x.split('=')[1]));
     // If the image's container is wider than it is tall, we only set width and
     // unset height, and vice versa.
     if (this.el.outerWidth() >= this.el.outerHeight()) {
-      args['w'] = this.el.outerWidth() * this.dpr;
+      args['w'] = this.largestImageWidth;
       delete args['h'];
     } else {
       args['h'] = this.el.outerHeight() * this.dpr;
@@ -188,9 +223,11 @@ export default class ImgixBgImage {
     // Redefine q and go the other direction -- take the args object and convert
     // it back to an array of querystring parameters, as ["k=v", "k=v", ...].
     q = [];
-    for (let k in args) { q.push(`${k}=${args[k]}`) }
+    for (let k in args) {
+      q.push(`${k}=${args[k]}`);
+    }
     // Store the result and return.
-    return this.fullSizeImgUrl = `${url[0]}?${q.join('&')}`;
+    return (this.fullSizeImgUrl = `${url[0]}?${q.join('&')}`);
   }
 
   /**
@@ -255,7 +292,9 @@ export default class ImgixBgImage {
    */
   updateElImg() {
     this.setFullSizeImgUrl();
-    this.el.css('background-image', `url('${this.fullSizeImgUrl}')`);
+    $('<img>')
+      .on('load', event => this.el.css('background-image', `url('${this.fullSizeImgUrl}')`))
+      .attr('src', this.placeholderImgUrl);
   }
 
   /**
@@ -292,7 +331,7 @@ export default class ImgixBgImage {
    */
   initEventListeners() {
     this.initResizeEnd();
-    $(window).on('resizeEnd', (event) => this.updateElImg());
+    $(window).on('resizeEnd', event => this.updateElImg());
   }
 
   /**
@@ -302,7 +341,7 @@ export default class ImgixBgImage {
   initResizeEnd() {
     $(window).resize(function() {
       if (this.resizeTo) {
-        clearTimeout(this.resizeTo)
+        clearTimeout(this.resizeTo);
       }
       this.resizeTo = setTimeout(function() {
         $(this).trigger('resizeEnd');

@@ -1,8 +1,9 @@
-export default class ImgixImage {
-
+export default class Image {
   constructor(img) {
     // Length of crossfade transition.
     this.timeToFade = 500;
+    // Data attribute applied before processing.
+    this.processingAttr = 'data-imgix-img-processed';
     // The main image (pixelated placeholder).
     this.placeholderImg = $(img);
     // Configure the main placeholder image.
@@ -14,12 +15,34 @@ export default class ImgixImage {
   /**
    * Load an image in memory (not within the DOM) with the same source as the
    * placeholder image. Once that has completed, we know we're safe to begin
-   * processing.
+   * listening for the image to intersect the viewport.
    */
   initOptimization() {
     $('<img>')
-      .on('load', $.proxy(this.renderFullSizeImg, this))
+      .on('load', $.proxy(this.listenForIntersection, this))
       .attr('src', this.placeholderImg.attr('src'));
+  }
+
+  /**
+   * When the placeholder image intersects the viewport, begin processing.
+   * (IntersectionObserver and Object.assign() are not supported by IE, but the
+   * polyfills are loaded by Imgix.Optimizer.)
+   */
+  listenForIntersection() {
+    const observer = new IntersectionObserver($.proxy(this.onIntersection, this));
+    observer.observe(this.placeholderImg[0]);
+  }
+
+  /**
+   * When the placeholder image intersects the viewport, check if it is in the
+   * viewport and has not yet been processed. If those conditions are true,
+   * begin rendering the full size image and the transition process.
+   */
+  onIntersection(entries, observer) {
+    let img = $(entries[0].target);
+    if (!entries[0].isIntersecting || $(img).attr(this.processingAttr)) return;
+    img.attr(this.processingAttr, true);
+    this.renderFullSizeImg();
   }
 
   // ---------------------------------------- | Placeholder Image
@@ -29,6 +52,7 @@ export default class ImgixImage {
    */
   initPlaceholder() {
     this.setPlaceholderCss();
+    this.setPlaceholderParentTmpCss();
   }
 
   /**
@@ -40,6 +64,21 @@ export default class ImgixImage {
     if (this.placeholderImg.css('position') != 'absolute') {
       this.placeholderImg.css('position', 'relative');
     }
+  }
+
+  /**
+   * The parent of the image container should be relatively positioned
+   * (temporarily) so temp image can be absolutely positioned.
+   */
+  setPlaceholderParentTmpCss() {
+    this.parentStyles = {
+      display: this.placeholderImg.parent().css('display'),
+      position: this.placeholderImg.parent().css('position')
+    };
+    this.placeholderImg.parent().css({
+      display: 'block',
+      position: 'relative'
+    });
   }
 
   // ---------------------------------------- | Full-Size Image
@@ -72,9 +111,21 @@ export default class ImgixImage {
       position: 'absolute',
       top: this.placeholderImg.position().top,
       left: this.placeholderImg.position().left,
-      width: this.placeholderImg.width(),
-      height: this.placeholderImg.height()
+      width: '100%',
+      height: '100%'
     });
+  }
+
+  /**
+   * Return the width and height of the placeholder image, including decimals.
+   * Uses precise measurements like this helps ensure the element doesn't slide
+   * when transitioning to the full size image.
+   */
+  getPlaceholderImgRect() {
+    return {
+      width: this.placeholderImg[0].getBoundingClientRect().width,
+      height: this.placeholderImg[0].getBoundingClientRect().height
+    };
   }
 
   /**
@@ -87,9 +138,15 @@ export default class ImgixImage {
    * upon.
    */
   setFullSizeImgSrc() {
-    var newSrc = this.placeholderImg.attr('src')
-      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.placeholderImg.width())
-      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.placeholderImg.height());
+    let newSrc = this.placeholderImg
+      .attr('src')
+      .replace(/(\?|\&)(w=)(\d+)/i, '$1$2' + this.getPlaceholderImgRect().width)
+      .replace(/(\?|\&)(h=)(\d+)/i, '$1$2' + this.getPlaceholderImgRect().height);
+    // Add a height attribute if it is missing. This is the key to the image not
+    // jumping around after transitioning to the full-size image.
+    if (newSrc.search(/(\?|\&)(h=)(\d+)/i) < 0) {
+      newSrc = `${newSrc}&h=${this.getPlaceholderImgRect().height}&fit=crop`;
+    }
     this.fullSizeImg.attr('ix-src', newSrc);
     // TODO: Make this a configurable option or document it as a more semantic temporary class
     this.fullSizeImg.addClass('img-responsive imgix-optimizing');
@@ -133,6 +190,7 @@ export default class ImgixImage {
     this.fadeOutPlaceholder();
     setTimeout(() => {
       this.removeFullSizeImgProperties();
+      this.replacePlaceholderParentTmpCss();
       this.removeImg();
     }, this.timeToFade);
   }
@@ -155,10 +213,22 @@ export default class ImgixImage {
   }
 
   /**
+   * Reset the container's adjusted CSS properties.
+   */
+  replacePlaceholderParentTmpCss() {
+    this.placeholderImg.parent().css({
+      display: this.parentStyles.display,
+      position: this.parentStyles.position
+    });
+  }
+
+  /**
    * Remove the placeholder image from the DOM since we no longer need it.
    */
   removeImg() {
-    if(!this.placeholderImg) { return }
+    if (!this.placeholderImg) {
+      return;
+    }
     this.placeholderImg.remove();
     this.placeholderImg = undefined;
   }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>IMGIX Optimizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="http://d1tmclqz61gqwd.cloudfront.net/styles/crds-styles-3.0.9.css">
+    <link rel="stylesheet" href="main.css" />
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
+    <script src="imgix-optimizer.js"></script>
+  </head>
+
+  <body>
+
+    <div class="feature-cards card-deck--expanded-layout">
+      <div class="card">
+        <a href="/andover" class="block">
+          <img
+            src="https://crds-media-int.imgix.net/2cNdFxxlsIuY2Syw4UuioA/17449e3a1c91aa0cd4d09c91973526c3/crossroads-church-andover-bg.jpg?auto=format,compress&w=12&h=9&fit=crop"
+            data-optimize-img
+          />
+        </a>
+        <div class="card-block">
+          <h4 class="card-title card-title--overlap text-uppercase"><a href="/andover">Andover</a></h4>
+          <div class="card-text">
+            <p>
+              123 Testing Lane<br />
+              Cincinnati, OH 45424
+            </p>
+            (<a target="_blank" href="https://map-url.com">Map</a>)
+            <p>
+              <strong>Service Times:</strong><br />
+              <p>
+                SUNDAY ALL DAY
+                <a href="https://www.crossroads.net/andover"><strong>See Christmas Service Times Here</strong></a>
+              </p>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        new Imgix.Optimizer();
+      })();
+    </script>
+  </body>
+</html>
