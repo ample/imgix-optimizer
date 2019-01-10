@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>IMGIX Optimizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" />
+
+    <!--
+      <style>
+        .w-200 {
+          width: 200px;
+        }
+        .inline-block {
+          display: inline-block;
+        }
+        .block {
+          display: block;
+        }
+      </style>
+    -->
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
+    <script src="imgix-optimizer.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Inline, and doesn't use the optimizer.</h2>
+      <p>
+        <img
+          style="width: 200px"
+          src="https://images.unsplash.com/photo-1517134062979-e1234be8a085?auto=format,compress&w=400"
+        />
+        Ratione, Lorem ipsum dolor sit, amet consectetur adipisicing elit. tenetur nulla exercitationem aliquid cum
+        nostrum earum blanditiis cupiditate, omnis assumenda natus nesciunt esse optio qui. Obcaecati vel dolores maxime
+        nostrum.
+      </p>
+      <h2>Inline</h2>
+      <p>
+        <img
+          style="width: 200px"
+          src="https://images.unsplash.com/photo-1517134062979-e1234be8a085?auto=format,compress&w=10"
+          data-optimize-img
+        />
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur adipisci eius quo repellendus sapiente enim
+        laboriosam nemo numquam itaque aut, architecto totam beatae dolorum libero, est exercitationem ad quae maiores!
+      </p>
+      <h2>Inline Block</h2>
+      <p>
+        <img
+          style="width: 200px; display: inline-block;"
+          src="https://images.unsplash.com/photo-1533540046196-4710d983af1b?auto=format,compress&w=12&h=9&fit=crop"
+          data-optimize-img
+        />
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur adipisci eius quo repellendus sapiente enim
+        laboriosam nemo numquam itaque aut, architecto totam beatae dolorum libero, est exercitationem ad quae maiores!
+      </p>
+      <h2>Block</h2>
+      <img
+        style="display: block;"
+        src="https://images.unsplash.com/photo-1513415277900-a62401e19be4?auto=format,compress&w=16&h=9&fit=crop"
+        data-optimize-img
+      />
+    </div>
+
+    <script>
+      (function() {
+        new Imgix.Optimizer();
+      })();
+    </script>
+  </body>
+</html>

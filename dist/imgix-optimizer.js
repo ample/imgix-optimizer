@@ -92,7 +92,7 @@
       key: 'initPlaceholder',
       value: function initPlaceholder() {
         this.setPlaceholderCss();
-        this.setPlaceholderParentTmpCss();
+        this.wrapPlaceholder();
       }
 
       /**
@@ -108,23 +108,16 @@
           this.placeholderImg.css('position', 'relative');
         }
       }
-
-      /**
-       * The parent of the image container should be relatively positioned
-       * (temporarily) so temp image can be absolutely positioned.
-       */
-
     }, {
-      key: 'setPlaceholderParentTmpCss',
-      value: function setPlaceholderParentTmpCss() {
-        this.parentStyles = {
-          display: this.placeholderImg.parent().css('display'),
-          position: this.placeholderImg.parent().css('position')
-        };
-        this.placeholderImg.parent().css({
-          display: 'block',
-          position: 'relative'
+      key: 'wrapPlaceholder',
+      value: function wrapPlaceholder() {
+        // console.log(this.placeholderImg.css('display'), this.placeholderImg.css('position'));
+        var wrapper = $('<span>').css({
+          position: 'relative',
+          display: 'block'
         });
+        this.placeholderImg.wrap(wrapper);
+        this.wrapper = this.placeholderImg.parent();
       }
 
       // ---------------------------------------- | Full-Size Image
@@ -263,7 +256,6 @@
         this.fadeOutPlaceholder();
         setTimeout(function () {
           _this2.removeFullSizeImgProperties();
-          _this2.replacePlaceholderParentTmpCss();
           _this2.removeImg();
         }, this.timeToFade);
       }
@@ -289,19 +281,6 @@
         this.fullSizeImg.removeAttr('style');
         // TODO: Update this with how the class is handled above.
         this.fullSizeImg.removeClass('imgix-optimizing');
-      }
-
-      /**
-       * Reset the container's adjusted CSS properties.
-       */
-
-    }, {
-      key: 'replacePlaceholderParentTmpCss',
-      value: function replacePlaceholderParentTmpCss() {
-        this.placeholderImg.parent().css({
-          display: this.parentStyles.display,
-          position: this.parentStyles.position
-        });
       }
 
       /**

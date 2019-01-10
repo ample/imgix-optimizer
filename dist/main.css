@@ -1,6 +1,13 @@
 img {
-  /* position: relative; */
+  max-width: 100%;
+}
+
+.card-img {
   width: 100%;
+}
+
+.inline-img {
+  width: 200px;
 }
 
 .jumbotron {
