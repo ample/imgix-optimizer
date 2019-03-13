@@ -6,9 +6,19 @@ export default class Image {
     this.processingAttr = 'data-imgix-img-processed';
     // The main image (pixelated placeholder).
     this.placeholderImg = $(img);
-    // Configure the main placeholder image.
+    // Wait for the image to load prior to kicking off the optimization process.
+    if (this.placeholderImg.height() > 0) {
+      this.init();
+    } else {
+      this.placeholderImg.on('load', $.proxy(this.init, this));
+    }
+  }
+
+  /**
+   * Configure the main placeholder image and kick off the optimization process.
+   */
+  init() {
     this.initPlaceholder();
-    // Kick off the optimization process.
     this.initOptimization();
   }
 
@@ -22,6 +32,8 @@ export default class Image {
       .on('load', $.proxy(this.listenForIntersection, this))
       .attr('src', this.placeholderImg.attr('src'));
   }
+
+  // ---------------------------------------- | Lazy Loading Control
 
   /**
    * When the placeholder image intersects the viewport, begin processing.
@@ -51,34 +63,37 @@ export default class Image {
    * Make necessary CSS adjustments to main placeholder image.
    */
   initPlaceholder() {
+    this.wrapPlaceholder();
     this.setPlaceholderCss();
-    this.setPlaceholderParentTmpCss();
+  }
+
+  /**
+   * Wrap the placeholder image in a <div>. This enables better control over the
+   * wrapping element and provides a more fluid transition process.
+   */
+  wrapPlaceholder() {
+    this.tmpWrapper = $('<div>').css({
+      position: 'relative',
+      height: this.placeholderImg[0].getBoundingClientRect().height,
+      width: this.placeholderImg[0].getBoundingClientRect().width,
+      margin: this.placeholderImg.css('margin')
+    });
+    this.placeholderImg.wrap(this.tmpWrapper);
   }
 
   /**
    * The main image must have a position set for it to remain in front of the
    * full-size image. We assume that if the element is not explicitly positioned
    * absolutely, then it can safely be positioned relatively.
+   *
+   * And temporarily remove any margin from the image, as the box model gets
+   * delegated to the temporary wrapper during the transition period.
    */
   setPlaceholderCss() {
     if (this.placeholderImg.css('position') != 'absolute') {
       this.placeholderImg.css('position', 'relative');
     }
-  }
-
-  /**
-   * The parent of the image container should be relatively positioned
-   * (temporarily) so temp image can be absolutely positioned.
-   */
-  setPlaceholderParentTmpCss() {
-    this.parentStyles = {
-      display: this.placeholderImg.parent().css('display'),
-      position: this.placeholderImg.parent().css('position')
-    };
-    this.placeholderImg.parent().css({
-      display: 'block',
-      position: 'relative'
-    });
+    this.placeholderImg.css({ margin: 0 });
   }
 
   // ---------------------------------------- | Full-Size Image
@@ -190,8 +205,9 @@ export default class Image {
     this.fadeOutPlaceholder();
     setTimeout(() => {
       this.removeFullSizeImgProperties();
-      this.replacePlaceholderParentTmpCss();
       this.removeImg();
+      // this.unwrapImg();
+      // 215 x 161.3 // 215 x 161 // 216.66 x 163
     }, this.timeToFade);
   }
 
@@ -213,16 +229,6 @@ export default class Image {
   }
 
   /**
-   * Reset the container's adjusted CSS properties.
-   */
-  replacePlaceholderParentTmpCss() {
-    this.placeholderImg.parent().css({
-      display: this.parentStyles.display,
-      position: this.parentStyles.position
-    });
-  }
-
-  /**
    * Remove the placeholder image from the DOM since we no longer need it.
    */
   removeImg() {
@@ -231,5 +237,12 @@ export default class Image {
     }
     this.placeholderImg.remove();
     this.placeholderImg = undefined;
+  }
+
+  /**
+   * Remove the temporary wrapper and and give the margin back to the image.
+   */
+  unwrapImg() {
+    this.fullSizeImg.css('margin', this.tmpWrapper.css('margin')).unwrap();
   }
 }
