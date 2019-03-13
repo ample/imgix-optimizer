@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Inline Test</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" />
+    <style>
+      .inline-img {
+        width: 250px;
+        margin: 30px;
+      }
+    </style>
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://rawgit.com/imgix/imgix.js/master/dist/imgix.min.js"></script>
+    <script src="imgix-optimizer.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        class="inline-img"
+        src="https://images.unsplash.com/photo-1513791222152-c347a9d6c3dd?auto=format,compress&w=12&h=9&fit=crop"
+        data-optimize-img
+      />
+      <img
+        class="inline-img"
+        src="https://images.unsplash.com/photo-1472457897821-70d3819a0e24?auto=format,compress&w=10&h=10&fit=crop"
+        data-optimize-img
+      />
+    </div>
+
+    <script>
+      (function() {
+        new Imgix.Optimizer();
+      })();
+    </script>
+  </body>
+</html>
