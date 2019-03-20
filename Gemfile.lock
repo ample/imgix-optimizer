@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imgix-optimizer (0.0.7)
+    imgix-optimizer (0.0.8)
 
 GEM
   remote: https://rubygems.org/

@@ -35,6 +35,9 @@
       this.processingAttr = 'data-imgix-img-processed';
       // The main image (pixelated placeholder).
       this.placeholderImg = $(img);
+      // Tracks state of the transition so some actions don't fire during the
+      // transition period.
+      this.transitioning = false;
       // Wait for the image to load prior to kicking off the optimization process.
       if (this.placeholderImg.height() > 0) {
         this.init();
@@ -100,7 +103,8 @@
       // ---------------------------------------- | Placeholder Image
 
       /**
-       * Make necessary CSS adjustments to main placeholder image.
+       * Make necessary CSS adjustments to main placeholder image and listen for
+       * changes.
        */
 
     }, {
@@ -108,6 +112,7 @@
       value: function initPlaceholder() {
         this.wrapPlaceholder();
         this.setPlaceholderCss();
+        $(window).resize($.proxy(this.rewrapPlaceholder, this));
       }
 
       /**
@@ -118,11 +123,14 @@
     }, {
       key: 'wrapPlaceholder',
       value: function wrapPlaceholder() {
+        var margin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
         this.tmpWrapper = $('<div>').css({
+          display: 'inline-block',
           position: 'relative',
           height: this.placeholderImg[0].getBoundingClientRect().height,
           width: this.placeholderImg[0].getBoundingClientRect().width,
-          margin: this.placeholderImg.css('margin')
+          margin: margin || this.placeholderImg.css('margin')
         });
         this.placeholderImg.wrap(this.tmpWrapper);
       }
@@ -145,6 +153,21 @@
         this.placeholderImg.css({ margin: 0 });
       }
 
+      /**
+       * If the transition has not yet happened, figure out the margin of the
+       * wrapper, then unwrap and rewrap. This resets the size of the wrapper so it
+       * doesn't overflow after resize events.
+       */
+
+    }, {
+      key: 'rewrapPlaceholder',
+      value: function rewrapPlaceholder() {
+        if (this.transitioning || !this.placeholderImg) return true;
+        var wrapperMargin = this.tmpWrapper.css('margin');
+        this.placeholderImg.unwrap();
+        this.wrapPlaceholder(wrapperMargin);
+      }
+
       // ---------------------------------------- | Full-Size Image
 
       /**
@@ -154,6 +177,7 @@
     }, {
       key: 'renderFullSizeImg',
       value: function renderFullSizeImg() {
+        this.transitioning = true;
         this.initFullSizeImg();
         this.setFullSizeImgTempCss();
         this.setFullSizeImgSrc();
@@ -281,9 +305,9 @@
         this.fadeOutPlaceholder();
         setTimeout(function () {
           _this2.removeFullSizeImgProperties();
-          _this2.removeImg();
-          // this.unwrapImg();
-          // 215 x 161.3 // 215 x 161 // 216.66 x 163
+          _this2.removePlaceholderImg();
+          _this2.unwrapImg();
+          _this2.transitioning = false;
         }, this.timeToFade);
       }
 
@@ -315,8 +339,8 @@
        */
 
     }, {
-      key: 'removeImg',
-      value: function removeImg() {
+      key: 'removePlaceholderImg',
+      value: function removePlaceholderImg() {
         if (!this.placeholderImg) {
           return;
         }
