@@ -6,6 +6,9 @@ export default class Image {
     this.processingAttr = 'data-imgix-img-processed';
     // The main image (pixelated placeholder).
     this.placeholderImg = $(img);
+    // Tracks state of the transition so some actions don't fire during the
+    // transition period.
+    this.transitioning = false;
     // Wait for the image to load prior to kicking off the optimization process.
     if (this.placeholderImg.height() > 0) {
       this.init();
@@ -60,23 +63,26 @@ export default class Image {
   // ---------------------------------------- | Placeholder Image
 
   /**
-   * Make necessary CSS adjustments to main placeholder image.
+   * Make necessary CSS adjustments to main placeholder image and listen for
+   * changes.
    */
   initPlaceholder() {
     this.wrapPlaceholder();
     this.setPlaceholderCss();
+    $(window).resize($.proxy(this.rewrapPlaceholder, this));
   }
 
   /**
    * Wrap the placeholder image in a <div>. This enables better control over the
    * wrapping element and provides a more fluid transition process.
    */
-  wrapPlaceholder() {
+  wrapPlaceholder(margin = null) {
     this.tmpWrapper = $('<div>').css({
+      display: 'inline-block',
       position: 'relative',
       height: this.placeholderImg[0].getBoundingClientRect().height,
       width: this.placeholderImg[0].getBoundingClientRect().width,
-      margin: this.placeholderImg.css('margin')
+      margin: margin || this.placeholderImg.css('margin')
     });
     this.placeholderImg.wrap(this.tmpWrapper);
   }
@@ -96,12 +102,25 @@ export default class Image {
     this.placeholderImg.css({ margin: 0 });
   }
 
+  /**
+   * If the transition has not yet happened, figure out the margin of the
+   * wrapper, then unwrap and rewrap. This resets the size of the wrapper so it
+   * doesn't overflow after resize events.
+   */
+  rewrapPlaceholder() {
+    if (this.transitioning || !this.placeholderImg) return true;
+    var wrapperMargin = this.tmpWrapper.css('margin');
+    this.placeholderImg.unwrap();
+    this.wrapPlaceholder(wrapperMargin);
+  }
+
   // ---------------------------------------- | Full-Size Image
 
   /**
    * Render the full-size image behind the placeholder image.
    */
   renderFullSizeImg() {
+    this.transitioning = true;
     this.initFullSizeImg();
     this.setFullSizeImgTempCss();
     this.setFullSizeImgSrc();
@@ -205,9 +224,9 @@ export default class Image {
     this.fadeOutPlaceholder();
     setTimeout(() => {
       this.removeFullSizeImgProperties();
-      this.removeImg();
-      // this.unwrapImg();
-      // 215 x 161.3 // 215 x 161 // 216.66 x 163
+      this.removePlaceholderImg();
+      this.unwrapImg();
+      this.transitioning = false;
     }, this.timeToFade);
   }
 
@@ -231,7 +250,7 @@ export default class Image {
   /**
    * Remove the placeholder image from the DOM since we no longer need it.
    */
-  removeImg() {
+  removePlaceholderImg() {
     if (!this.placeholderImg) {
       return;
     }
