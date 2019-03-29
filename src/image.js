@@ -120,6 +120,7 @@ export default class Image {
    * Render the full-size image behind the placeholder image.
    */
   renderFullSizeImg() {
+    this.rewrapPlaceholder();
     this.transitioning = true;
     this.initFullSizeImg();
     this.setFullSizeImgTempCss();

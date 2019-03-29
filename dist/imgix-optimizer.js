@@ -177,6 +177,7 @@
     }, {
       key: 'renderFullSizeImg',
       value: function renderFullSizeImg() {
+        this.rewrapPlaceholder();
         this.transitioning = true;
         this.initFullSizeImg();
         this.setFullSizeImgTempCss();
