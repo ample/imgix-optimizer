@@ -356,7 +356,10 @@
     }, {
       key: 'unwrapImg',
       value: function unwrapImg() {
-        this.fullSizeImg.css('margin', this.tmpWrapper.css('margin')).unwrap();
+        this.fullSizeImg.css("margin", this.tmpWrapper.css("margin"));
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') === -1) {
+          this.fullSizeImg.unwrap();
+        }
       }
     }]);
     return Image;
