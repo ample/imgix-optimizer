@@ -263,6 +263,9 @@ export default class Image {
    * Remove the temporary wrapper and and give the margin back to the image.
    */
   unwrapImg() {
-    this.fullSizeImg.css('margin', this.tmpWrapper.css('margin')).unwrap();
+    this.fullSizeImg.css("margin", this.tmpWrapper.css("margin"));
+    if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){
+      this.fullSizeImg.unwrap();
+    }
   }
 }
